@@ -1,27 +1,22 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 /***********************************************************************************************
-This program is filter to leave sixth clumn, basic type of word.
-This program's argument is part of mecab matrix except first clumn and numbers of words.
+This program is to change ',' to '\t' in matrix.
+This program's argument are part of mecab matrix except first clumn and out put file name.
 ***********************************************************************************************/
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 #include<stdio.h>
 #include<string.h>
-#include<malloc.h>
 #include<stdlib.h>
-
-const int max_size = 2000;
 
 int main(int argc,char *argv[]){
 	FILE *input, *output;
-	long long words;
 	char inp_name[50], out_name[50];
-	char *strw;
-	int chr, cun = 0;
-	long long i = 0,j = 0;
+	int chr = 0;
+
 	//Cheak argument and open files
-	if(argc != 4){
+	if(argc != 3){
 		printf("Misstake of argument.\n");
 		return -1;
 	}
@@ -40,32 +35,13 @@ int main(int argc,char *argv[]){
 		return -1;
 	}
 	
-	words = atoi(argv[3]);
-	printf("%d\n",words);
 
-	//Make array for words.
-	strw = (char *)malloc((long long)words * 50 * sizeof(char));
-
+	//change ',' to '\t'.
 	while((chr = fgetc(input)) != EOF){
-		if(chr == ',') cun++;
-		if(cun == 4){
-			strw[j * 50 + i] = chr;
-			i++;
-		}
-		if(chr == '\n'){
-			 cun = 0;
-			 i = 0;
-			 j++;
-		}
-		
+		if(chr == ',') fprintf(output,"\t");
+		else fprintf(output,"%c",chr);
 	}
 
-	for(j =0;j < words; j++){
-		i =0;
-		while(strw[j * 50 +i] != '\n'){
-			printf("%c",strw[j * 50 + i]);
-			i++;
-		}
-		printf("\n");
-	}
+	fclose(input);
+	fclose(output);
 }
