@@ -10,7 +10,7 @@ const long long N = 40;                  // number of closest words that will be
 const long long max_w = 50;              // max length of vocabulary entries
 
 int main(int argc, char *argv[]) {
-  FILE *f,*inp,*outp;//バイナリファイルを読み込むストリーム
+  FILE *dicf,*inp,*outp;//バイナリファイルを読み込むストリーム
   char st1[max_size],stf[50];//I made stf[] for get a word from Wakatidate*.txt
   char *bestw[N];//コサイン距離が近い単語N個を格納する配列
   char file_name[max_size], st[100][max_size];//file_nameは引数のargvを格納する配列
@@ -22,29 +22,29 @@ int main(int argc, char *argv[]) {
 
 
 
-  //////confirmation of argument
+  //confirmation of argument
   if (argc < 2) {
     printf("Usage: ./distance <FILE>\nwhere FILE contains word projections in the BINARY FORMAT\n");
     return 0;
   }
 
 
-  //////open file and error check
+  //open file and error check
   strcpy(file_name, argv[1]);
-  f = fopen(file_name, "rb");
-  if (f == NULL) {
+  dicf = fopen(file_name, "rb");
+  if (dicf == NULL) {
     printf("Binary file not found\n");
     return -1;
   }
   
   inp = fopen("data/article_f_samp_waka_fil.svd", "r");
-  if (f == NULL) {
+  if (inp == NULL) {
     printf("Input file not found\n");
     return -1;
   }
 
   outp = fopen("data/article_samp_desrep.cvd", "w");
-  if (f == NULL) {
+  if (outp== NULL) {
     printf("Output file not found\n");
     return -1;
   }
@@ -53,63 +53,54 @@ int main(int argc, char *argv[]) {
   words=4536628;
   size=200;
   
+
+  //Reserve memory for Co-occurense matrix
   vocab = (char *)malloc((long long)words * max_w * sizeof(char));    //bestw[] may be an array for candidate of nearest words. 
 
-
-  ///////Reserve memory for Co-occurense matrix
   for (a = 0; a < N; a++) bestw[a] = (char *)malloc(max_size * sizeof(char));
+
   M = (float *)malloc((long long)words * (long long)size * sizeof(float));
   if (M == NULL) {
     printf("Cannot allocate memory: %lld MB    %lld  %lld\n", (long long)words * size * sizeof(float) / 1048576, words, size);
     return -1;
+
   }
 
 
-
-
-printf("ok71\n");
-
-  ////////calculate the length and sqrt about binary dictionaly
+  //Make dictionary for searching. vocab[] is word dictionary and M[] is distributed representation dictionary.
   for (b = 0; b < words; b++) {
-    a = 0;
+ 	 a = 0;
+	 //Put in words to vocab[] each ont charactors. 
+   	 while (1) {
+     		 vocab[b * max_w + a] = fgetc(f);
+     		 if (feof(f) || (vocab[b * max_w + a] == ' ')) break;
+     		 if ((a < max_w) && (vocab[b * max_w + a] != '\n')) a++;
+    	}
+   	vocab[b * max_w + a] = 0;
+	//Put in number to M[].
+   	for (a = 0; a < size; a++) fread(&M[a + b * size], sizeof(float), 1, f);
 
-    ////prosecc against one word 
-    while (1) {
-      vocab[b * max_w + a] = fgetc(f);
-      if (feof(f) || (vocab[b * max_w + a] == ' ')) break;
-      if ((a < max_w) && (vocab[b * max_w + a] != '\n')) a++;
-    }
-    vocab[b * max_w + a] = 0;
-    
-    for (a = 0; a < size; a++) fread(&M[a + b * size], sizeof(float), 1, f);
-    
-    //calculate the length
-    len = 0;
-    for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
-    len = sqrt(len);//原点からの距離
-    
-    //normalization
-    for (a = 0; a < size; a++) M[a + b * size] /= len;//正規化？
+    	//Normaliz M[]'s number.
+    	len = 0;
+    	for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
+    	len = sqrt(len);
+   	for (a = 0; a < size; a++) M[a + b * size] /= len;
   }
 
 
-  fclose(f);
-printf("ok98\n");
+  fclose(dicf);
   
   while (fgets(stf,50,inp)!=NULL) {
-    //for (a = 0; a < N; a++) bestd[a] = 0;
-    //for (a = 0; a < N; a++) bestw[a][0] = 0;
-    printf("Enter word or sentence (EXIT to break): ");
-    a = 0;
-   //----------------------ユーザが打った単語をst配列に格納している。最後に0を代入している。------------------
-   while (1) {
-      st1[a] = stf[a];
-      if ((st1[a] == '\n') || (a >= max_size - 1)) {
-        st1[a] = 0;
-        break;
-      }
-      a++;
-    }
+    	a = 0;
+  	 //----------------------ユーザが打った単語をst配列に格納している。最後に0を代入している。------------------
+  	 while (1) {
+     		 st1[a] = stf[a];
+     		 if ((st1[a] == '\n') || (a >= max_size - 1)) {
+       			 st1[a] = 0;
+      			  break;
+      		}
+     		 a++;
+   	 }
    //----------------------フレーズを入力された場合に単語に分解している。-------------------
     if (!strcmp(st1, "EXIT")) break;
 
@@ -170,6 +161,8 @@ printf("ok98\n");
 
   fclose(inp);
   fclose(outp);
-
+  free(vocab);
+  for(a = 0;a < N;a++) free(bestw[a]);
+  free(M);
   return 0;
 }

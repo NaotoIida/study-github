@@ -1,4 +1,13 @@
 #!/bin/bash
+
+#i---Change zenkaku number to hankaku number.
+#ii--Use mecab to text.
+#iii-Change , to \t on result of mecab.
+#iv--Pick up first clumn and six clumn of macab and make each files.
+#v---Count the number of lines of words,text.
+#vi--Integrate first clumn and six clumn.
+
+
 origintext=$1
 nkf -Z $origintext > data/hansu_${origintext#*/}
 
@@ -9,4 +18,6 @@ mecab data/hansu_${origintext#*/} -o data/mecab_${origintext#*/}
 cut -f 1 data/svd_${origintext#*/} > data/firclm_${origintext#*/}
 cut -f 6 data/svd_${origintext#*/} > data/sixclm_${origintext#*/}
 
-line=$(wc -l data/wakati_${origintext#*/} | grep -o '[0-9]*')
+lines=$(wc -l data/firclm_${origintext#*/} | grep -o '[0-9]*')
+
+./clm_int.o data/firclm_${origintext#*/} data/sixclm_${origintext#*/} data/intgclm_${origintext#*/} $lines
