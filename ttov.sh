@@ -20,4 +20,4 @@ cut -f 6 data/svd_${origintext#*/} > data/sixclm_${origintext#*/}
 
 lines=$(wc -l data/firclm_${origintext#*/} | grep -o '[0-9]*')
 
-./clm_int.o data/firclm_${origintext#*/} data/sixclm_${origintext#*/} data/intgclm_${origintext#*/} $lines
+./clm_intg.o data/firclm_${origintext#*/} data/sixclm_${origintext#*/} data/intgclm_${origintext#*/} $lines
