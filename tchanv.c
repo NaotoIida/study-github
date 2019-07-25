@@ -38,13 +38,13 @@ int main(int argc, char *argv[]) {
   
   lines = atoi(argv[2]);
 
-  inp = fopen("data/intgclm_samplet.txt", "r");
+  inp = fopen("data/intgclm_breadcrumb.txt", "r");
   if (inp == NULL) {
     printf("Input file not found\n");
     return -1;
   }
 
-  outp = fopen("data/desrep_samplet.txt", "w");
+  outp = fopen("data/desrep_breadcrumb.txt", "w");
   if (outp== NULL) {
     printf("Output file not found\n");
     return -1;
@@ -161,7 +161,7 @@ int main(int argc, char *argv[]) {
   printf("---------------------------------------------------------------------------------------------------------------------------------------------\n---------------------------------------------------------------------------------------------------------------------------------------------\n printf A         \n");
   for(b=0;b<lines;b++){
 	  for(a=0;a<size;a++){
-		 printf("%0.4f",A[a] += pow(fabsf(M[a+b*size]-(ave_w[a]/size)),2.0));
+		 printf("%0.4f",(A[a] += pow(fabsf(M[a+b*size]-(ave_w[a]/size)),2.0)));
 	  }
   }
 
