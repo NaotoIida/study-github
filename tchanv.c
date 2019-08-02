@@ -143,7 +143,7 @@ int main(int argc, char *argv[]) {
   	 for(a=0;a<size;a++){
    		fprintf(outp,"%.5f,",M[a+b*size]);
 		printf("%.5f",M[a+b*size]);
-		ave_w[a] += (M[a+b*size]);
+		ave_w[a] += (100*M[a+b*size]);
   	 }
   	 fprintf(outp,"\n");
  }
@@ -161,7 +161,7 @@ int main(int argc, char *argv[]) {
   printf("---------------------------------------------------------------------------------------------------------------------------------------------\n---------------------------------------------------------------------------------------------------------------------------------------------\n printf A         \n");
   for(b=0;b<lines;b++){
 	  for(a=0;a<size;a++){
-		 printf("%0.4f",(A[a] += pow(fabsf(M[a+b*size]-(ave_w[a]/size)),2.0)));
+//		 printf("%0.4f",(A[a] += pow(fabsf(M[a+b*size]-(ave_w[a]/size)),2.0)));
 	  }
   }
 
