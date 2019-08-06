@@ -72,28 +72,75 @@ end
  sum_w = Array.new(201,0)
  wi = Array.new(201,0)
  C = Array.new(20).map{Array.new(20).map{Array.new(201,0)}}
+ r = 1
+ s = 1
+ s_max = 1
 
- while r != M.length
-    M.each_with_index do |outer_array,i|
-       200.times do |k|
-          sum_w[k+1] += M[i][k+1]
-       end
-       if M[i][0] == 'EOF'
-	  200.times do |k|
-             wi[k+1] = sum_w[k+1] / i
-	  end
-	  for j in 1..i
-	     200.times do |k|
-	        C[r][i][k+1] += ((M[j][k+1] - wi[k+1]).abs ** 2)
+ while r != (s_max + 1)
+       M.each_with_index do |outer_array,i|
+	  if r <= s 
+             200.times do |k|
+                sum_w[k+1] += M[i][k+1]
              end
+             if M[i][0] == 'EOS'
+                200.times do |k|
+                   wi[k+1] = sum_w[k+1] / (i + 1)
+                end
+                for j in 1..i
+                   200.times do |k|
+                      C[r][s][k+1] += ((M[j][k+1] - wi[k+1]).abs ** 2)
+                   end
+		   C[r][s][0] = r
+                end
+                s += 1
+             end
+	  elsif M[i][0] =="EOS"
+	          s += 1
 	  end
-        end
-    end
-    r += 1
+          if s_max < s
+	     s_max = s
+	  end
+
+       end
+       r += 1
+       200.times do |k|
+          sum_w[k+1] = 0
+	  wi[k+1] = 0
+       end
+       s = 1
  end
 
-p C[0][10]
-p C[0][11]
-p C[0][12]
+ C.each do |outer_array|
+    outer_array.each do |midle_array|
+       midle_array.each do |inner_array|
+          outp.printf("%f,",inner_array)
+       end
+       outp.putc("\n")
+    end
+ end
+
+=begin
+ while r != M.length
+	 M.each_with_index do |outer_array,i|
+	    if M[i][0] == "EOS"
+		    for j in 0..i
+			    200.times do |k|
+			       sum_w[k+1] += M[j][k+1]
+			    end
+		    end
+		    200.times do |k|
+		       wi[k+1] = sum_w[k+1] / (i + 1)
+		    end
+		    for j in 0..i
+		       200.times do |k|
+		          C[r][s][k+1] += ((M[j][k+1] - wi[k+1]).abs ** 2)
+		       end
+		    end
+		    s += 1
+		    
+#p C[0][10]
+#p C[0][11]
+#p C[0][12]
+=end
 inp.close
 outp.close
