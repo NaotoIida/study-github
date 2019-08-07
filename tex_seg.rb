@@ -72,10 +72,11 @@ end
  sum_w = Array.new(201,0)
  wi = Array.new(201,0)
  C = Array.new(20).map{Array.new(20).map{Array.new(201,0)}}
- r = 1
- s = 1
- s_max = 1
-
+ r = 1 #Pramater starting sentence
+ s = 1 #Pramater ending sentence
+ s_max = 1 #Pramater preventing to reverce
+ rm_i = 0 #parameter considered about extra i
+ 
  while r != (s_max + 1)
        M.each_with_index do |outer_array,i|
 	  if r <= s 
@@ -84,9 +85,9 @@ end
              end
              if M[i][0] == 'EOS'
                 200.times do |k|
-                   wi[k+1] = sum_w[k+1] / (i + 1)
+                   wi[k+1] = sum_w[k+1] / ((i + 1) - rm_i)
                 end
-                for j in 1..i
+                for j in (rm_i)..i
                    200.times do |k|
                       C[r][s][k+1] += ((M[j][k+1] - wi[k+1]).abs ** 2)
                    end
@@ -96,6 +97,7 @@ end
              end
 	  elsif M[i][0] =="EOS"
 	          s += 1
+		  rm_i = i + 1
 	  end
           if s_max < s
 	     s_max = s
@@ -110,6 +112,7 @@ end
        s = 1
  end
 
+#Put out C() to output file.
  C.each do |outer_array|
     outer_array.each do |midle_array|
        midle_array.each do |inner_array|
