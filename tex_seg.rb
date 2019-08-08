@@ -71,7 +71,7 @@ end
 #Calculate C(r,s).
  sum_w = Array.new(201,0)
  wi = Array.new(201,0)
- C = Array.new(20).map{Array.new(20).map{Array.new(201,0)}}
+ C = Array.new(M.length/3).map{Array.new(M.length/3).map{Array.new(201,0)}}
  r = 1 #Pramater starting sentence
  s = 1 #Pramater ending sentence
  s_max = 1 #Pramater preventing to reverce
@@ -87,9 +87,9 @@ end
                 200.times do |k|
                    wi[k+1] = sum_w[k+1] / ((i + 1) - rm_i)
                 end
-                for j in (rm_i)..i
+                ((i + 1) - rm_i).times do |j|
                    200.times do |k|
-                      C[r][s][k+1] += ((M[j][k+1] - wi[k+1]).abs ** 2)
+                      C[r][s][k+1] += ((M[j][k+1] - wi[k+1]).abs ** 2) #If use push method, C will be more compact.
                    end
 		   C[r][s][0] = r
                 end
@@ -122,28 +122,40 @@ end
     end
  end
 
-=begin
- while r != M.length
-	 M.each_with_index do |outer_array,i|
-	    if M[i][0] == "EOS"
-		    for j in 0..i
-			    200.times do |k|
-			       sum_w[k+1] += M[j][k+1]
-			    end
-		    end
-		    200.times do |k|
-		       wi[k+1] = sum_w[k+1] / (i + 1)
-		    end
-		    for j in 0..i
-		       200.times do |k|
-		          C[r][s][k+1] += ((M[j][k+1] - wi[k+1]).abs ** 2)
-		       end
-		    end
-		    s += 1
-		    
-#p C[0][10]
-#p C[0][11]
-#p C[0][12]
-=end
-inp.close
+#Mark parts of "EOS" in the text to end_s.
+ end_s =Array.new
+ M.each_with_index do |data,i|
+    if M[i][0] == "EOS"
+	    end_s.push(i)
+    end
+ end
+
+#Saerch arg_minC().
+ mincost = Array.new(end_s.length).map{Array.new(2,1000)}
+ cost1 = 0
+ cost2 = 0
+ 
+ for h in 2..end_s.length
+	 for t in 2..h
+		 200.times do |i|
+		    cost1 += C[1][t-1][i+1]**2
+		    cost2 += C[t][h][i+1]**2
+		 end
+		 cost1 = Math.sqrt(cost1)
+		 cost2 = Math.sqrt(cost2)
+		 if mincost[h-1][1] > cost1+cost2
+			 mincost[h-1][0] = t
+			 mincost[h-1][1] = cost1+cost2
+		 end
+	 end
+ end
+
+#Put out arg_minC() to output file.
+ mincost.each_with_index do |outer_array,i|
+    outp.printf("%d,",mincost[i][0])
+    outp.printf("%f,",mincost[i][1])
+    outp.putc("\n")
+ end
+ 
+ inp.close
 outp.close
