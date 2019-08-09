@@ -55,7 +55,6 @@ end
     end 
     j += 1
  end
- p A
 
 #Put out calculate data to output file.
  outp = File.open("data/cal_breadcrumb.txt","w")
@@ -134,6 +133,7 @@ end
  mincost = Array.new(end_s.length).map{Array.new(2,1000)}
  cost1 = 0
  cost2 = 0
+ c_nol = Array.new #This array for keep nolm all C() for step3.
  
  for h in 2..end_s.length
 	 for t in 2..h
@@ -143,10 +143,14 @@ end
 		 end
 		 cost1 = Math.sqrt(cost1)
 		 cost2 = Math.sqrt(cost2)
+		 c_nol.push([1, t-1, cost1])
+		 c_nol.push([t, h, cost2])
 		 if mincost[h-1][1] > cost1+cost2
 			 mincost[h-1][0] = t
 			 mincost[h-1][1] = cost1+cost2
 		 end
+		 cost1 = 0
+		 cost2 = 0
 	 end
  end
 
@@ -157,5 +161,58 @@ end
     outp.putc("\n")
  end
  
- inp.close
+#Step3, Saerch arg_mine().
+ #C() calculate and put in to c_nol. And c_nol convert and make c_nolarray for treating easier.
+ c_nolarray = Array.new(end_s.length).map{Array.new(end_s.length)}
+ 
+ c_nol.sort!
+ c_nol.each_with_index do |facter,i|
+    for i in 0..(c_nol.length-1)
+            if c_nol[i] == c_nol[i+1]
+           	 c_nol.delete_at(i+1)
+            end
+    end
+ end
+
+ c_nol.each do |array|
+    c_nolarray[array[0]-1][array[1]-1] = array[2]
+ end
+
+#Saerch arg_mine().
+ e = Array.new(end_s.length).map{Array.new(end_s.length).map{Array.new(2,1000)}}
+ mincost3 = Array.new
+ 
+ 0.upto(e.length-1) do |i|
+    e[i][1][0] = mincost[i][0]
+    e[i][1][1] = mincost[i][1]
+ end
+ 
+ #e.each do |i|
+ # p i
+ #end
+ #c_nolarray.each do |i|
+ # p i 
+ #end
+ #mincost.each do |i|
+ # p i
+ #end
+
+ 3.upto(end_s.length) do |q|
+    q.upto(end_s.length) do |h|
+       q.upto(h) do |t|
+#	  p e[t-2][q-2]
+#	  p c_nolarray[t-1][h-1]
+	  if e[t-1][q-1][1] > e[t-2][q-2][1]+c_nolarray[t-1][h-1]
+	     e[t-1][q-1][0] = t
+             e[t-1][q-1][1] = e[t-2][q-2][1]+c_nolarray[t-1][h-1]
+	  end
+       end
+    end
+ end
+
+ e.each do |i|
+    p i
+ end 
+
+inp.close
 outp.close

@@ -38,13 +38,15 @@ int main(int argc, char *argv[]) {
   
   lines = atoi(argv[2]);
 
-  inp = fopen("data/intgclm_breadcrumb.txt", "r");
+  strcpy(file_name, argv[3]);
+  inp = fopen(file_name, "r");
   if (inp == NULL) {
     printf("Input file not found\n");
     return -1;
   }
 
-  outp = fopen("data/desrep_breadcrumb.txt", "w");
+  strcpy(file_name,argv[4]);
+  outp = fopen(file_name, "w");
   if (outp== NULL) {
     printf("Output file not found\n");
     return -1;
@@ -99,27 +101,7 @@ int main(int argc, char *argv[]) {
      	         }
      		 a++;
    	 }
-	 /*
-	 //----------------------フレーズを入力された場合に単語に分解している。-------------------
-   	 cn = 0;
-   	 b = 0;
-   	 c = 0;
-   	 while (1) {
-     		 st[cn][b] = st1[c];
-     		 b++;
-     		 c++;
-     		 st[cn][b] = 0;
-     		 if (st1[c] == 0) break;
-     		 if (st1[c] == ' ') {
-       			 cn++;
-       			 b = 0;
-       			 c++;
-     		 }
-   	 }
-   	 cn++;
-	 */
 	 //Search the input word from vocabrary dictionary.
-//   	 for (a = 0; a < lines; a++) {
 	 a = 0;
      		 for (b = 0; b < words; b++) if (!strcmp(&vocab[b * max_w], &st1[a])) break;
      		 if (b == words) b = -1;
@@ -129,9 +111,6 @@ int main(int argc, char *argv[]) {
        			 printf("Out of dictionary word!\n");
        			 continue;
      		 }
-//  	 }
-   	 //Put out distrebuted representation to output file.
-//   	 if (b == -1) continue;
 	 a=0;
   	 while(st1[a]!=0){
    		fprintf(outp,"%c",st1[a]);
@@ -147,25 +126,6 @@ int main(int argc, char *argv[]) {
   	 }
   	 fprintf(outp,"\n");
  }
-
-  //Culcurate w.
-  printf("---------------------------------------------------------------------------------------------------------------------------------------------\n---------------------------------------------------------------------------------------------------------------------------------------------\n printf ave_w         \n");
-  for(a=0;a<size;a++){
-	  printf("%0.4f     ",ave_w[a]/size);
-	  if(a%9 == 0){
-	  	printf("\n");
-          }
-  }
-
-  //Clucrate A.
-  printf("---------------------------------------------------------------------------------------------------------------------------------------------\n---------------------------------------------------------------------------------------------------------------------------------------------\n printf A         \n");
-  for(b=0;b<lines;b++){
-	  for(a=0;a<size;a++){
-//		 printf("%0.4f",(A[a] += pow(fabsf(M[a+b*size]-(ave_w[a]/size)),2.0)));
-	  }
-  }
-
-
 
   fclose(inp);
   fclose(outp);
