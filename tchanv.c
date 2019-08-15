@@ -120,8 +120,8 @@ int main(int argc, char *argv[]) {
 	 puts("");
   	 fprintf(outp,",");
   	 for(a=0;a<size;a++){
-   		fprintf(outp,"%.5f,",M[a+b*size]);
-		printf("%.5f",M[a+b*size]);
+   		fprintf(outp,"%f,",M[a+b*size]);
+		printf("%f",M[a+b*size]);
 		ave_w[a] += (100*M[a+b*size]);
   	 }
   	 fprintf(outp,"\n");
