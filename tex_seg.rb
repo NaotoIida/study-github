@@ -57,7 +57,7 @@ end
  end
 
 #Put out calculate data to output file.
- outp = File.open("data/cal_breadcrumb.txt","w")
+ outp = File.open("data/cal_two.txt","w")
  ave_w.each do |i|
     outp.printf("%f,",i)
  end
