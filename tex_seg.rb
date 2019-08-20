@@ -57,7 +57,7 @@ end
  end
 
 #Put out calculate data to output file.
- outp = File.open("data/cal_two.txt","w")
+ outp = File.open(ARGV[1],"w")
  ave_w.each do |i|
     outp.printf("%f,",i)
  end
@@ -88,7 +88,7 @@ end
                 end
                 ((i + 1) - rm_i).times do |j|
                    200.times do |k|
-                      C[r][s][k+1] += ((M[j][k+1] - wi[k+1]).abs ** 2) #If use push method, C will be more compact.
+                      C[r][s][k+1] += ((M[rm_i+j][k+1] - wi[k+1]).abs ** 2) #If use push method, C will be more compact.
                    end
 		   C[r][s][0] = r
                 end
@@ -213,6 +213,18 @@ end
  e.each do |i|
     p i
  end 
+
+#Step4, separate segments.
+ j = $stdin.gets.to_i
+ g = end_s.length
+ res = Array.new
+
+ j.downto(2) do |i|
+    res.push(e[g-1][i-1][0])
+    g = e[g-1][i-1][0]-1
+ end
+
+ p res
 
 inp.close
 outp.close
