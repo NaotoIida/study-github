@@ -16,7 +16,8 @@ int main(int argc, char *argv[]) {
   long long words, size, a, b, c, d, cn, i;//wordsはバイナリファイルに登録してある単語の数,sizeは各分散ベクトルの次元数
   float *M;//*Mは概念行列を格納するポインタ
   char *vocab;
-  float ave_w[200] = 0, tmp_w[200] = 0, A[200] = 0;
+  long long lines;
+  float ave_w[200] = {0}, tmp_w[200] = {0}, A[200] = {0};
 
 
 
@@ -35,13 +36,17 @@ int main(int argc, char *argv[]) {
     return -1;
   }
   
-  inp = fopen("data/intgclm_Origintext.txt", "r");
+  lines = atoi(argv[2]);
+
+  strcpy(file_name, argv[3]);
+  inp = fopen(file_name, "r");
   if (inp == NULL) {
     printf("Input file not found\n");
     return -1;
   }
 
-  outp = fopen("data/desrep_Origintext.txt", "w");
+  strcpy(file_name,argv[4]);
+  outp = fopen(file_name, "w");
   if (outp== NULL) {
     printf("Output file not found\n");
     return -1;
@@ -96,73 +101,31 @@ int main(int argc, char *argv[]) {
      	         }
      		 a++;
    	 }
-	 /*
-	 //----------------------フレーズを入力された場合に単語に分解している。-------------------
-   	 cn = 0;
-   	 b = 0;
-   	 c = 0;
-   	 while (1) {
-     		 st[cn][b] = st1[c];
-     		 b++;
-     		 c++;
-     		 st[cn][b] = 0;
-     		 if (st1[c] == 0) break;
-     		 if (st1[c] == ' ') {
-       			 cn++;
-       			 b = 0;
-       			 c++;
-     		 }
-   	 }
-   	 cn++;
-	 */
 	 //Search the input word from vocabrary dictionary.
-   	 for (a = 0; a < cn; a++) {
+	 a = 0;
      		 for (b = 0; b < words; b++) if (!strcmp(&vocab[b * max_w], &st1[a])) break;
      		 if (b == words) b = -1;
      		 printf("\nWord: %s  Position in vocabulary: %lld\n", &st1[a], b);
       		//error that the target word does not appear in the dictionaly
      		 if (b == -1) {
        			 printf("Out of dictionary word!\n");
-       			 break;
+       			 continue;
      		 }
-   	 }
-   	 //Put out distrebuted representation to output file.
-   	 if (b == -1) continue;
 	 a=0;
   	 while(st1[a]!=0){
    		fprintf(outp,"%c",st1[a]);
+		printf("%c",st1[a]);
 		a++;
   	 }
+	 puts("");
   	 fprintf(outp,",");
   	 for(a=0;a<size;a++){
-   		fprintf(outp,"%.5f,",M[a+b*size]);
-		ave_w[a] += M[a+b*size];
+   		fprintf(outp,"%f,",M[a+b*size]);
+		printf("%f",M[a+b*size]);
+		ave_w[a] += (100*M[a+b*size]);
   	 }
   	 fprintf(outp,"\n");
  }
-
-  //Culcurate w.
-  printf("---------------------------------------------------------------------------------------------------------------------------------------------\n
-	  ---------------------------------------------------------------------------------------------------------------------------------------------\n
-	  printf ave_w         \n");
-  for(a=0;a<size;a++){
-	  printf("%0.4f     ",ave_w[a]/size);
-	  if(a%9 == 0){
-	  	printf("\n");
-          }
-  }
-
-  //Clucrate A.
-  printf("---------------------------------------------------------------------------------------------------------------------------------------------\n
-	  ---------------------------------------------------------------------------------------------------------------------------------------------\n
-	  printf A         \n");
-  for(b=0;b<words;b++){
-	  for(a=0;a<size;a++){
-		  A[a] += pow(fabsf(M[a+b*size]-(ave_w[a]/size)),2.0);
-	  }
-  }
-
-
 
   fclose(inp);
   fclose(outp);
