@@ -67,7 +67,7 @@ end
  end
  outp.putc("\n") 
 
-#Calculate C(r,s).
+#Step1, Calculate C(r,s).
  sum_w = Array.new(201,0)
  wi = Array.new(201,0)
  C = Array.new(M.length/3).map{Array.new(M.length/3).map{Array.new(201,0)}}
@@ -121,12 +121,17 @@ end
     end
  end
 
-#Mark parts of "EOS" in the text to end_s.
+#Step2, Mark parts of "EOS" in the text to end_s.
  end_s =Array.new
  M.each_with_index do |data,i|
     if M[i][0] == "EOS"
 	    end_s.push(i)
     end
+ end
+
+ p ("end_s")
+ end_s.each do |i|
+    p i
  end
 
 #Saerch arg_minC().
@@ -154,6 +159,11 @@ end
 	 end
  end
 
+ p "mincost"
+ mincost.each do |i|
+    p i
+ end
+
 #Put out arg_minC() to output file.
  mincost.each_with_index do |outer_array,i|
     outp.printf("%d,",mincost[i][0])
@@ -165,6 +175,11 @@ end
  #C() calculate and put in to c_nol. And c_nol convert and make c_nolarray for treating easier.
  c_nolarray = Array.new(end_s.length).map{Array.new(end_s.length)}
  
+ p 'c_nol'
+ c_nol.each do |i|
+    p i
+ end
+
  c_nol.sort!
  c_nol.each_with_index do |facter,i|
     for i in 0..(c_nol.length-1)
@@ -176,6 +191,17 @@ end
 
  c_nol.each do |array|
     c_nolarray[array[0]-1][array[1]-1] = array[2]
+ end
+
+ p "c_nol"
+ c_nol.each do |i|
+    p i
+ end
+
+ p "c_nolarray"
+ c_nolarray.each do |i|
+    p i
+    print "\n"
  end
 
 #Saerch arg_mine().
@@ -212,6 +238,7 @@ end
 
  e.each do |i|
     p i
+    print "\n"
  end 
 
 #Step4, separate segments.
