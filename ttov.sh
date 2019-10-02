@@ -14,7 +14,9 @@ nkf -Z $origintext > data/hansu_${origintext#*/}
 
 mecab data/hansu_${origintext#*/} -o data/mecab_${origintext#*/}
 
-./clm_fil.o data/mecab_${origintext#*/} data/svd_${origintext#*/}
+ruby ind_words_fil.rb data/mecab_${origintext#*/} data/ind_${origintext#*/}
+
+./clm_fil.o data/ind_${origintext#*/} data/svd_${origintext#*/}
 
 cut -f 1 data/svd_${origintext#*/} > data/firclm_${origintext#*/}
 cut -f 6 data/svd_${origintext#*/} > data/sixclm_${origintext#*/}
