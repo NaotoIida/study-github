@@ -129,11 +129,6 @@ end
     end
  end
 
- p ("end_s")
- end_s.each do |i|
-    p i
- end
-
 #Saerch arg_minC().
  mincost = Array.new(end_s.length).map{Array.new(2,1000)}
  cost1 = 0
@@ -159,11 +154,6 @@ end
 	 end
  end
 
- p "mincost"
- mincost.each do |i|
-    p i
- end
-
 #Put out arg_minC() to output file.
  mincost.each_with_index do |outer_array,i|
     outp.printf("%d,",mincost[i][0])
@@ -175,11 +165,6 @@ end
  #C() calculate and put in to c_nol. And c_nol convert and make c_nolarray for treating easier.
  c_nolarray = Array.new(end_s.length).map{Array.new(end_s.length)}
  
- p 'c_nol'
- c_nol.each do |i|
-    p i
- end
-
  c_nol.sort!
  c_nol.each_with_index do |facter,i|
     for i in 0..(c_nol.length-1)
@@ -193,20 +178,8 @@ end
     c_nolarray[array[0]-1][array[1]-1] = array[2]
  end
 
- p "c_nol"
- c_nol.each do |i|
-    p i
- end
-
- p "c_nolarray"
- c_nolarray.each do |i|
-    p i
-    print "\n"
- end
-
 #Saerch arg_mine().
  e = Array.new(end_s.length).map{Array.new(end_s.length).map{Array.new(2,1000)}}
- mincost3 = Array.new
  
  0.upto(e.length-1) do |i|
     e[i][1][0] = mincost[i][0]
@@ -236,12 +209,8 @@ end
     end
  end
 
- e.each do |i|
-    p i
-    print "\n"
- end 
-
 #Step4, separate segments.
+ p ("Please input sparate number.")
  j = $stdin.gets.to_i
  g = end_s.length
  res = Array.new
@@ -253,5 +222,6 @@ end
 
  p res
 
+ p C
 inp.close
 outp.close
