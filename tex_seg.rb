@@ -70,7 +70,8 @@ end
 #Step1, Calculate C(r,s).
  sum_w = Array.new(201,0)
  wi = Array.new(201,0)
- C = Array.new(M.length/3).map{Array.new(M.length/3).map{Array.new(201,0)}}
+ c_label = Array.new(201,0)
+ C = Array.new
  r = 1 #Pramater starting sentence
  s = 1 #Pramater ending sentence
  s_max = 1 #Pramater preventing to reverce
@@ -88,10 +89,17 @@ end
                 end
                 ((i + 1) - rm_i).times do |j|
                    200.times do |k|
-                      C[r][s][k+1] += ((M[rm_i+j][k+1] - wi[k+1]).abs ** 2) #If use push method, C will be more compact.
+                      c_label[k+1] += ((M[rm_i+j][k+1] - wi[k+1]).abs ** 2) #If use push method, C will be more compact.
                    end
-		   C[r][s][0] = r
                 end
+		p 'c_label'
+		p c_label
+		C.push(c_label)
+		p 'C'
+		p C
+		200.times do |k|
+		   c_label[k+1] = 0
+		end
                 s += 1
              end
 	  elsif M[i][0] =="EOS"
@@ -111,14 +119,16 @@ end
        s = 1
  end
 
+ p 'C'
+ C.each do |i|
+    p i
+ end
 #Put out C() to output file.
  C.each do |outer_array|
-    outer_array.each do |midle_array|
-       midle_array.each do |inner_array|
+    outer_array.each do |inner_array|
           outp.printf("%f,",inner_array)
-       end
-       outp.putc("\n")
     end
+       outp.putc("\n")
  end
 
 #Step2, Mark parts of "EOS" in the text to end_s.
@@ -129,13 +139,8 @@ end
     end
  end
 
- p ("end_s")
- end_s.each do |i|
-    p i
- end
-
 #Saerch arg_minC().
- mincost = Array.new(end_s.length).map{Array.new(2,1000)}
+ mine2 = Array.new(end_s.length).map{Array.new(2,1000)}
  cost1 = 0
  cost2 = 0
  c_nol = Array.new #This array for keep nolm all C() for step3.
@@ -150,24 +155,19 @@ end
 		 cost2 = Math.sqrt(cost2)
 		 c_nol.push([1, t-1, cost1])
 		 c_nol.push([t, h, cost2])
-		 if mincost[h-1][1] > cost1+cost2
-			 mincost[h-1][0] = t
-			 mincost[h-1][1] = cost1+cost2
+		 if mine2[h-1][1] > cost1+cost2
+			 mine2[h-1][0] = t
+			 mine2[h-1][1] = cost1+cost2
 		 end
 		 cost1 = 0
 		 cost2 = 0
 	 end
  end
 
- p "mincost"
- mincost.each do |i|
-    p i
- end
-
 #Put out arg_minC() to output file.
- mincost.each_with_index do |outer_array,i|
-    outp.printf("%d,",mincost[i][0])
-    outp.printf("%f,",mincost[i][1])
+ mine2.each_with_index do |outer_array,i|
+    outp.printf("%d,",mine2[i][0])
+    outp.printf("%f,",mine2[i][1])
     outp.putc("\n")
  end
  
@@ -175,11 +175,6 @@ end
  #C() calculate and put in to c_nol. And c_nol convert and make c_nolarray for treating easier.
  c_nolarray = Array.new(end_s.length).map{Array.new(end_s.length)}
  
- p 'c_nol'
- c_nol.each do |i|
-    p i
- end
-
  c_nol.sort!
  c_nol.each_with_index do |facter,i|
     for i in 0..(c_nol.length-1)
@@ -193,24 +188,13 @@ end
     c_nolarray[array[0]-1][array[1]-1] = array[2]
  end
 
- p "c_nol"
- c_nol.each do |i|
-    p i
- end
-
- p "c_nolarray"
- c_nolarray.each do |i|
-    p i
-    print "\n"
- end
-
 #Saerch arg_mine().
  e = Array.new(end_s.length).map{Array.new(end_s.length).map{Array.new(2,1000)}}
- mincost3 = Array.new
+ mine23 = Array.new
  
  0.upto(e.length-1) do |i|
-    e[i][1][0] = mincost[i][0]
-    e[i][1][1] = mincost[i][1]
+    e[i][1][0] = mine2[i][0]
+    e[i][1][1] = mine2[i][1]
  end
  
  #e.each do |i|
@@ -219,7 +203,7 @@ end
  #c_nolarray.each do |i|
  # p i 
  #end
- #mincost.each do |i|
+ #mine2.each do |i|
  # p i
  #end
 
@@ -236,11 +220,6 @@ end
     end
  end
 
- e.each do |i|
-    p i
-    print "\n"
- end 
-
 #Step4, separate segments.
  j = $stdin.gets.to_i
  g = end_s.length
@@ -251,7 +230,6 @@ end
     g = e[g-1][i-1][0]-1
  end
 
- p res
 
 inp.close
 outp.close
