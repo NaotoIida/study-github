@@ -113,10 +113,21 @@ end
  end
 
  p "C"
- C.each do |i|
-    p i
- end 
-
+ p C[1][1]
+ p C[1][2]
+ p C[1][3]
+ p C[1][4]
+ p C[1][5]
+ p C[2][2]
+ p C[2][3]
+ p C[2][4]
+ p C[2][5]
+ p C[3][3]
+ p C[3][4]
+ p C[3][5]
+ p C[4][4]
+ p C[4][5]
+ p C[5][5]
 #Put out C() to output file.
  C.each do |outer_array|
     outer_array.each do |midle_array|
