@@ -120,9 +120,7 @@ end
  end
 
  p 'C'
- C.each do |i|
-    p i
- end
+ p C
 #Put out C() to output file.
  C.each do |outer_array|
     outer_array.each do |inner_array|
