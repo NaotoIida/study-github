@@ -16,7 +16,6 @@ M = Array.new
 inp.each do |i|
    M.push(i.chomp!.split(","))
 end
-
 #Convert from char to munber.
 j = 0
 M.each do |outer_array|
@@ -70,57 +69,57 @@ end
 #Step1, Calculate C(r,s).
  sum_w = Array.new(201,0)
  wi = Array.new(201,0)
- c_label = Array.new(201,0)
  C = Array.new
  r = 1 #Pramater starting sentence
  s = 1 #Pramater ending sentence
- s_max = 1 #Pramater preventing to reverce
+ s_max = 2 #Pramater preventing to reverce
  rm_i = 0 #parameter considered about extra i
  
- while r != (s_max + 1)
+ while r != (s_max )
        M.each_with_index do |outer_array,i|
 	  if r <= s 
              200.times do |k|
-                sum_w[k+1] += M[i][k+1]
+             sum_w[k+1] += M[i][k+1]
              end
              if M[i][0] == 'EOS'
-                200.times do |k|
-                   wi[k+1] = sum_w[k+1] / ((i + 1) - rm_i)
+		200.times do |k|
+                wi[k+1] = sum_w[k+1] / ((i + 1) - rm_i)
                 end
+ c_label = Array.new(201,0)
                 ((i + 1) - rm_i).times do |j|
                    200.times do |k|
-                      c_label[k+1] += ((M[rm_i+j][k+1] - wi[k+1]).abs ** 2) #If use push method, C will be more compact.
+                   c_label[k+1] += ((M[rm_i+j][k+1] - wi[k+1]).abs ** 2) #If use push method, C will be more compact.
                    end
                 end
-		p 'c_label'
-		p c_label
 		C.push(c_label)
-		p 'C'
-		p C
-		200.times do |k|
-		   c_label[k+1] = 0
-		end
+		#200.times do |k|
+		#c_label[k+1] = 0
+		#end
                 s += 1
              end
+	  
 	  elsif M[i][0] =="EOS"
-	          s += 1
-		  rm_i = i + 1
+	     s += 1
+	     rm_i = i + 1
 	  end
-          if s_max < s
+          
+	  if s_max < s
 	     s_max = s
 	  end
 
        end
+
        r += 1
        200.times do |k|
-          sum_w[k+1] = 0
-	  wi[k+1] = 0
+       sum_w[k+1] = 0
        end
        s = 1
+
  end
 
- p 'C'
- p C
+		C.each do |k|
+		   p k
+		end
 #Put out C() to output file.
  C.each do |outer_array|
     outer_array.each do |inner_array|
@@ -129,6 +128,7 @@ end
        outp.putc("\n")
  end
 
+=begin
 #Step2, Mark parts of "EOS" in the text to end_s.
  end_s =Array.new
  M.each_with_index do |data,i|
@@ -228,6 +228,6 @@ end
     g = e[g-1][i-1][0]-1
  end
 
-
+=end
 inp.close
 outp.close
