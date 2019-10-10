@@ -218,6 +218,7 @@ end
  end
 
 #Step4, separate segments.
+ p "Please classfy number"
  j = $stdin.gets.to_i
  g = end_s.length
  res = Array.new
@@ -226,8 +227,6 @@ end
     res.push(e[g-1][i-1][0])
     g = e[g-1][i-1][0]-1
  end
-
- p "Please classfy number"
 
 inp.close
 outp.close
