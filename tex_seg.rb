@@ -90,8 +90,9 @@ end
                    200.times do |k|
                       C[r][s][k+1] += ((M[rm_i+j][k+1] - wi[k+1]).abs ** 2) #If use push method, C will be more compact.
                    end
-		   C[r][s][0] = r
+		   C[r][s][0] = r+s*0.1
                 end
+		p C[r][s]
                 s += 1
              end
 	  elsif M[i][0] =="EOS"
@@ -129,11 +130,6 @@ end
     end
  end
 
- p ("end_s")
- end_s.each do |i|
-    p i
- end
-
 #Saerch arg_minC().
  mincost = Array.new(end_s.length).map{Array.new(2,1000)}
  cost1 = 0
@@ -159,11 +155,6 @@ end
 	 end
  end
 
- p "mincost"
- mincost.each do |i|
-    p i
- end
-
 #Put out arg_minC() to output file.
  mincost.each_with_index do |outer_array,i|
     outp.printf("%d,",mincost[i][0])
@@ -175,11 +166,6 @@ end
  #C() calculate and put in to c_nol. And c_nol convert and make c_nolarray for treating easier.
  c_nolarray = Array.new(end_s.length).map{Array.new(end_s.length)}
  
- p 'c_nol'
- c_nol.each do |i|
-    p i
- end
-
  c_nol.sort!
  c_nol.each_with_index do |facter,i|
     for i in 0..(c_nol.length-1)
@@ -193,16 +179,6 @@ end
     c_nolarray[array[0]-1][array[1]-1] = array[2]
  end
 
- p "c_nol"
- c_nol.each do |i|
-    p i
- end
-
- p "c_nolarray"
- c_nolarray.each do |i|
-    p i
-    print "\n"
- end
 
 #Saerch arg_mine().
  e = Array.new(end_s.length).map{Array.new(end_s.length).map{Array.new(2,1000)}}
@@ -236,11 +212,6 @@ end
     end
  end
 
- e.each do |i|
-    p i
-    print "\n"
- end 
-
 #Step4, separate segments.
  j = $stdin.gets.to_i
  g = end_s.length
@@ -251,7 +222,7 @@ end
     g = e[g-1][i-1][0]-1
  end
 
- p res
+ p "Please classfy number"
 
 inp.close
 outp.close
