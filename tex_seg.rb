@@ -29,47 +29,10 @@ M.each do |outer_array|
    j += 1
 end
 
-#Calculate ave_w. ave_w means average of whole of text.
-ave_w = Array.new(201,0)
-
-j = 0
-M.each do |outer_array|
-   200.times do |i|
-         ave_w[i+1] += (M[j][i+1])
-   end
-   j += 1
-end
-
-200.times do |i|
-   ave_w[i+1] /= M.length
-end
-
-#Calculate A. A means variance of whole of text.
- A = Array.new(201,0)
- j = 0
- M.each do |outer_array|
-    i = 0
-    200.times do |i|
-	  A[i+1] += ((M[j][i+1] - ave_w[i+1]).abs ** 2)
-    end 
-    j += 1
- end
-
-#Put out calculate data to output file.
- outp = File.open(ARGV[1],"w")
- ave_w.each do |i|
-    outp.printf("%f,",i)
- end
- outp.putc("\n")
- A.each do |i|
-    outp.printf("%f,",i)
- end
- outp.putc("\n") 
-
 #Step1, Calculate C(r,s).
  sum_w = Array.new(201,0)
  wi = Array.new(201,0)
- C = Array.new
+ c_list = Array.new
  r = 1 #Pramater starting sentence
  s = 1 #Pramater ending sentence
  s_max = 2 #Pramater preventing to reverce
@@ -85,16 +48,13 @@ end
 		200.times do |k|
                 wi[k+1] = sum_w[k+1] / ((i + 1) - rm_i)
                 end
- c_label = Array.new(201,0)
+                c_label = 0
                 ((i + 1) - rm_i).times do |j|
                    200.times do |k|
-                   c_label[k+1] += ((M[rm_i+j][k+1] - wi[k+1]).abs ** 2) #If use push method, C will be more compact.
+                   c_label += ((M[rm_i+j][k+1] - wi[k+1]) ** 2) #If use push method, C will be more compact.
                    end
                 end
-		C.push(c_label)
-		#200.times do |k|
-		#c_label[k+1] = 0
-		#end
+		c_list.push(c_label)
                 s += 1
              end
 	  
@@ -117,77 +77,53 @@ end
 
  end
 
-		C.each do |k|
-		   p k
-		end
+ c_list.each do |k|
+    p k
+ end
 #Put out C() to output file.
- C.each do |outer_array|
-    outer_array.each do |inner_array|
-          outp.printf("%f,",inner_array)
-    end
-       outp.putc("\n")
+ outp = File.open(ARGV[1],"w")
+ c_list.each do |i|
+    outp.printf("%f,",i)
  end
 
-=begin
-#Step2, Mark parts of "EOS" in the text to end_s.
- end_s =Array.new
- M.each_with_index do |data,i|
-    if M[i][0] == "EOS"
-	    end_s.push(i)
+#Step2
+ s_max = s_max-1  #reset s_max to exact number.
+ c_array = Array.new(s_max).map{Array.new(s_max,1000)}
+ k = 0
+ 
+ 1.upto(s_max) do |i|
+    1.upto(s_max) do|j|
+       if i <= j
+          c_array[i-1][j-1] = c_list[k]
+	  k += 1
+       end
     end
+ end
+
+ c_array.each do |outer|
+    p outer
  end
 
 #Saerch arg_minC().
- mine2 = Array.new(end_s.length).map{Array.new(2,1000)}
- cost1 = 0
- cost2 = 0
- c_nol = Array.new #This array for keep nolm all C() for step3.
+ e_min = Array.new(s_max).map{Array.new(s_max).map{Array.new(2,1000)}}
  
- for h in 2..end_s.length
+ for h in 2..s_max
 	 for t in 2..h
-		 200.times do |i|
-		    cost1 += C[1][t-1][i+1]**2
-		    cost2 += C[t][h][i+1]**2
-		 end
-		 cost1 = Math.sqrt(cost1)
-		 cost2 = Math.sqrt(cost2)
-		 c_nol.push([1, t-1, cost1])
-		 c_nol.push([t, h, cost2])
-		 if mine2[h-1][1] > cost1+cost2
-			 mine2[h-1][0] = t
-			 mine2[h-1][1] = cost1+cost2
-		 end
-		 cost1 = 0
-		 cost2 = 0
+	    if e_min[h-1][1][1] > c_array[0][t-2]+c_array[t-1][h-1]
+			 e_min[h-1][1][0] = t
+			 e_min[h-1][1][1] = c_array[0][t-2]+c_array[t-1][h-1]
+            end
 	 end
  end
 
-#Put out arg_minC() to output file.
- mine2.each_with_index do |outer_array,i|
-    outp.printf("%d,",mine2[i][0])
-    outp.printf("%f,",mine2[i][1])
-    outp.putc("\n")
+ e_min.each do |i|
+    p i
  end
- 
+
+=begin
 #Step3, Saerch arg_mine().
- #C() calculate and put in to c_nol. And c_nol convert and make c_nolarray for treating easier.
- c_nolarray = Array.new(end_s.length).map{Array.new(end_s.length)}
- 
- c_nol.sort!
- c_nol.each_with_index do |facter,i|
-    for i in 0..(c_nol.length-1)
-            if c_nol[i] == c_nol[i+1]
-           	 c_nol.delete_at(i+1)
-            end
-    end
- end
-
- c_nol.each do |array|
-    c_nolarray[array[0]-1][array[1]-1] = array[2]
- end
-
 #Saerch arg_mine().
- e = Array.new(end_s.length).map{Array.new(end_s.length).map{Array.new(2,1000)}}
+ e = Array.new(s_max).map{Array.new(end_s.length).map{Array.new(2,1000)}}
  mine23 = Array.new
  
  0.upto(e.length-1) do |i|
@@ -195,21 +131,10 @@ end
     e[i][1][1] = mine2[i][1]
  end
  
- #e.each do |i|
- # p i
- #end
- #c_nolarray.each do |i|
- # p i 
- #end
- #mine2.each do |i|
- # p i
- #end
 
- 3.upto(end_s.length) do |q|
-    q.upto(end_s.length) do |h|
+ 3.upto(s_max) do |q|
+    q.upto(s_max) do |h|
        q.upto(h) do |t|
-#	  p e[t-2][q-2]
-#	  p c_nolarray[t-1][h-1]
 	  if e[t-1][q-1][1] > e[t-2][q-2][1]+c_nolarray[t-1][h-1]
 	     e[t-1][q-1][0] = t
              e[t-1][q-1][1] = e[t-2][q-2][1]+c_nolarray[t-1][h-1]
@@ -220,7 +145,7 @@ end
 
 #Step4, separate segments.
  j = $stdin.gets.to_i
- g = end_s.length
+ g = s_max
  res = Array.new
 
  j.downto(2) do |i|
