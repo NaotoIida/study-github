@@ -100,6 +100,7 @@ end
     end
  end
 
+ p "c_array"
  c_array.each do |outer|
     p outer
  end
@@ -116,43 +117,42 @@ end
 	 end
  end
 
+ p "e_min" 
  e_min.each do |i|
     p i
  end
 
-=begin
 #Step3, Saerch arg_mine().
 #Saerch arg_mine().
- e = Array.new(s_max).map{Array.new(end_s.length).map{Array.new(2,1000)}}
- mine23 = Array.new
  
- 0.upto(e.length-1) do |i|
-    e[i][1][0] = mine2[i][0]
-    e[i][1][1] = mine2[i][1]
- end
- 
-
  3.upto(s_max) do |q|
     q.upto(s_max) do |h|
        q.upto(h) do |t|
-	  if e[t-1][q-1][1] > e[t-2][q-2][1]+c_nolarray[t-1][h-1]
-	     e[t-1][q-1][0] = t
-             e[t-1][q-1][1] = e[t-2][q-2][1]+c_nolarray[t-1][h-1]
+	  if e_min[t-1][q-1][1] > e_min[t-2][q-2][1]+c_array[t-1][h-1]
+	     e_min[t-1][q-1][0] = t
+             e_min[t-1][q-1][1] = e_min[t-2][q-2][1]+c_array[t-1][h-1]
 	  end
        end
     end
  end
 
+ p "e_min" 
+ e_min.each do |i|
+    p i
+ end
+
 #Step4, separate segments.
+ p "Please input number."
  j = $stdin.gets.to_i
  g = s_max
  res = Array.new
 
  j.downto(2) do |i|
-    res.push(e[g-1][i-1][0])
-    g = e[g-1][i-1][0]-1
+    res.push(e_min[g-1][i-1][0])
+    g = e_min[g-1][i-1][0]
  end
+ 
+ p res
 
-=end
 inp.close
 outp.close
