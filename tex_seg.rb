@@ -97,8 +97,12 @@ end
     end
  end
 
+ c_array.each do |i|
+    p i
+ end
+
 #Saerch arg_minC().
- e_min = Array.new(s_max).map{Array.new(s_max).map{Array.new(2,1000)}}
+ e_min = Array.new(s_max).map{Array.new(s_max).map{Array.new(2,10000)}}
  
  for h in 2..s_max
 	 for t in 2..h
@@ -109,13 +113,17 @@ end
 	 end
  end
 
+ e_min.each do |i|
+    p i
+ end
+
 #Step3, Saerch arg_mine().
 #Saerch arg_mine().
  
  3.upto(s_max) do |q|
     q.upto(s_max) do |h|
        q.upto(h) do |t|
-          print "#{t},#{q}=#{t-1},#{q-1}+#{t},#{h}\n"
+          #print "#{h},#{q}=#{t-1},#{q-1}+#{t},#{h}\n"
 	  if e_min[t-1][q-1][1] > e_min[t-2][q-2][1]+c_array[t-1][h-1]
 	     e_min[t-1][q-1][0] = t
              e_min[t-1][q-1][1] = e_min[t-2][q-2][1]+c_array[t-1][h-1]
