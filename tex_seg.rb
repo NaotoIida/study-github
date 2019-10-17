@@ -77,9 +77,6 @@ end
 
  end
 
- c_list.each do |k|
-    p k
- end
 #Put out C() to output file.
  outp = File.open(ARGV[1],"w")
  c_list.each do |i|
@@ -100,11 +97,6 @@ end
     end
  end
 
- p "c_array"
- c_array.each do |outer|
-    p outer
- end
-
 #Saerch arg_minC().
  e_min = Array.new(s_max).map{Array.new(s_max).map{Array.new(2,1000)}}
  
@@ -117,28 +109,19 @@ end
 	 end
  end
 
- p "e_min" 
- e_min.each do |i|
-    p i
- end
-
 #Step3, Saerch arg_mine().
 #Saerch arg_mine().
  
  3.upto(s_max) do |q|
     q.upto(s_max) do |h|
        q.upto(h) do |t|
+          print "#{t},#{q}=#{t-1},#{q-1}+#{t},#{h}\n"
 	  if e_min[t-1][q-1][1] > e_min[t-2][q-2][1]+c_array[t-1][h-1]
 	     e_min[t-1][q-1][0] = t
              e_min[t-1][q-1][1] = e_min[t-2][q-2][1]+c_array[t-1][h-1]
 	  end
        end
     end
- end
-
- p "e_min" 
- e_min.each do |i|
-    p i
  end
 
 #Step4, separate segments.
