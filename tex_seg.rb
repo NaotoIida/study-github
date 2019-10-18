@@ -8,6 +8,8 @@ Needed arguments are inputfilename, outputfilename, and number of words in text.
 ************************************************************************************************
 =end
 
+require 'csv'
+
 #Open input file. And make array for word and vector.
 inp = File.open(ARGV[0],"r")
 M = Array.new
@@ -17,16 +19,12 @@ inp.each do |i|
    M.push(i.chomp!.split(","))
 end
 #Convert from char to munber.
-j = 0
-M.each do |outer_array|
-   i = 0
-   outer_array.each do |inner_array|
+M.each_with_index do |outer_array,j|
+   outer_array.each_with_index do |inner_array,i|
       if i != 0 then
          M[j][i] = inner_array.to_f
       end
-      i += 1
    end
-   j += 1
 end
 
 #Step1, Calculate C(r,s).
@@ -85,51 +83,65 @@ end
 
 #Step2
  s_max = s_max-1  #reset s_max to exact number.
- c_array = Array.new(s_max).map{Array.new(s_max,1000)}
+ c_array = Array.new(s_max).map{Array.new(s_max+1,nil)}
  k = 0
  
  1.upto(s_max) do |i|
     1.upto(s_max) do|j|
        if i <= j
-          c_array[i-1][j-1] = c_list[k]
+          c_array[i-1][j] = c_list[k]
 	  k += 1
        end
     end
  end
+ c_array.unshift(Array.new(s_max,nil))
 
- c_array.each do |i|
-    p i
+ #Output c_array.
+ p 'c_array'
+ CSV.open("data/c_array_data.txt","wb") do |csv|
+    c_array.each do |i|
+       p i
+       csv << i
+    end
  end
 
 #Saerch arg_minC().
- e_min = Array.new(s_max).map{Array.new(s_max).map{Array.new(2,10000)}}
+ e_min = Array.new(s_max+1).map{Array.new(s_max+1).map{Array.new(2,nil)}}
  
  for h in 2..s_max
 	 for t in 2..h
-	    if e_min[h-1][1][1] > c_array[0][t-2]+c_array[t-1][h-1]
-			 e_min[h-1][1][0] = t
-			 e_min[h-1][1][1] = c_array[0][t-2]+c_array[t-1][h-1]
+	    if (e_min[h][2][1] == nil || e_min[h][2][1] > c_array[1][t-1]+c_array[t][h])
+			 e_min[h][2][0] = t
+			 e_min[h][2][1] = c_array[1][t-1]+c_array[t][h]
             end
 	 end
  end
-
- e_min.each do |i|
-    p i
- end
-
-#Step3, Saerch arg_mine().
-#Saerch arg_mine().
  
+#Step3, Saerch arg_mine().
+ #Saerch arg_mine().
  3.upto(s_max) do |q|
     q.upto(s_max) do |h|
        q.upto(h) do |t|
-          #print "#{h},#{q}=#{t-1},#{q-1}+#{t},#{h}\n"
+          print "logic::::#{h},#{q}=#{t-1},#{q-1}+#{t},#{h}\n"
+	  print "code;;;;;e_min[#{t-1}],[#{q-1}]=e_min[#{t-2}],[#{q-2}]+c_array[#{t-1}],[#{h-1}]\n"
 	  if e_min[t-1][q-1][1] > e_min[t-2][q-2][1]+c_array[t-1][h-1]
 	     e_min[t-1][q-1][0] = t
              e_min[t-1][q-1][1] = e_min[t-2][q-2][1]+c_array[t-1][h-1]
-	  end
+	   end
+          p e_min[t-1][q-1][1]
+          wait = $stdin.gets
        end
     end
+ end
+
+ p 'e_min'
+ e_min_file = File.open("data/e_min_data.txt","w")
+ e_min.each do |outer|
+    p outer
+    outer.each do |inner|
+       e_min_file.printf("%f,",inner[1])
+    end
+    e_min_file.printf("\n")
  end
 
 #Step4, separate segments.
@@ -147,3 +159,4 @@ end
 
 inp.close
 outp.close
+e_min_file.close
