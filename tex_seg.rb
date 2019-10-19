@@ -222,6 +222,5 @@ end
 
  p res
 
- p C
 inp.close
 outp.close
