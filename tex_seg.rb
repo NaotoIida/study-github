@@ -122,25 +122,28 @@ end
  3.upto(s_max) do |q|
     q.upto(s_max) do |h|
        q.upto(h) do |t|
-          print "logic::::#{h},#{q}=#{t-1},#{q-1}+#{t},#{h}\n"
-	  print "code;;;;;e_min[#{t-1}],[#{q-1}]=e_min[#{t-2}],[#{q-2}]+c_array[#{t-1}],[#{h-1}]\n"
-	  if e_min[t-1][q-1][1] > e_min[t-2][q-2][1]+c_array[t-1][h-1]
-	     e_min[t-1][q-1][0] = t
-             e_min[t-1][q-1][1] = e_min[t-2][q-2][1]+c_array[t-1][h-1]
+	  print "e_min[#{h}],[#{q}]=e_min[#{t-1}],[#{q-1}]+c_array[#{t}],[#{h}]\n"
+	  if (e_min[h][q][1] == nil || e_min[h][q][1] > e_min[t-1][q-1][1]+c_array[t][h])
+	     e_min[h][q][0] = t
+             e_min[h][q][1] = e_min[t-1][q-1][1]+c_array[t][h]
 	   end
-          p e_min[t-1][q-1][1]
-          wait = $stdin.gets
+          p e_min[h][q][1]
+#wait = $stdin.gets
        end
     end
  end
 
- p 'e_min'
+p 'e_min'
  e_min_file = File.open("data/e_min_data.txt","w")
  e_min.each do |outer|
     p outer
     outer.each do |inner|
-       e_min_file.printf("%f,",inner[1])
+       if inner[1] == nil
+          next
+       end
+       e_min_file.printf("%d:%f,",inner[0],inner[1])
     end
+    print "\n"
     e_min_file.printf("\n")
  end
 
@@ -148,14 +151,15 @@ end
  p "Please input number."
  j = $stdin.gets.to_i
  g = s_max
- res = Array.new
+ ans = Array.new
 
  j.downto(2) do |i|
-    res.push(e_min[g-1][i-1][0])
-    g = e_min[g-1][i-1][0]
+    p e_min[g]
+    ans.push(e_min[g][i])
+    g = e_min[g][i][0]
  end
  
- p res
+ p ans
 
 inp.close
 outp.close
