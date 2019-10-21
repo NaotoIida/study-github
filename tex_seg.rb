@@ -96,15 +96,6 @@ end
  end
  c_array.unshift(Array.new(s_max,nil))
 
- #Output c_array.
- p 'c_array'
- CSV.open("data/c_array_data.txt","wb") do |csv|
-    c_array.each do |i|
-       p i
-       csv << i
-    end
- end
-
 #Saerch arg_minC().
  e_min = Array.new(s_max+1).map{Array.new(s_max+1).map{Array.new(2,nil)}}
  
@@ -122,29 +113,12 @@ end
  3.upto(s_max) do |q|
     q.upto(s_max) do |h|
        q.upto(h) do |t|
-	  print "e_min[#{h}],[#{q}]=e_min[#{t-1}],[#{q-1}]+c_array[#{t}],[#{h}]\n"
 	  if (e_min[h][q][1] == nil || e_min[h][q][1] > e_min[t-1][q-1][1]+c_array[t][h])
 	     e_min[h][q][0] = t
              e_min[h][q][1] = e_min[t-1][q-1][1]+c_array[t][h]
 	   end
-          p e_min[h][q][1]
-#wait = $stdin.gets
        end
     end
- end
-
-p 'e_min'
- e_min_file = File.open("data/e_min_data.txt","w")
- e_min.each do |outer|
-    p outer
-    outer.each do |inner|
-       if inner[1] == nil
-          next
-       end
-       e_min_file.printf("%d:%f,",inner[0],inner[1])
-    end
-    print "\n"
-    e_min_file.printf("\n")
  end
 
 #Step4, separate segments.
@@ -163,4 +137,3 @@ p 'e_min'
 
 inp.close
 outp.close
-e_min_file.close

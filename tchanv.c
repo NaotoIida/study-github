@@ -105,23 +105,18 @@ int main(int argc, char *argv[]) {
 	 a = 0;
      		 for (b = 0; b < words; b++) if (!strcmp(&vocab[b * max_w], &st1[a])) break;
      		 if (b == words) b = -1;
-     		 printf("\nWord: %s  Position in vocabulary: %lld\n", &st1[a], b);
       		//error that the target word does not appear in the dictionaly
      		 if (b == -1) {
-       			 printf("Out of dictionary word!\n");
        			 continue;
      		 }
 	 a=0;
   	 while(st1[a]!=0){
    		fprintf(outp,"%c",st1[a]);
-		printf("%c",st1[a]);
 		a++;
   	 }
-	 puts("");
   	 fprintf(outp,",");
   	 for(a=0;a<size;a++){
    		fprintf(outp,"%f,",M[a+b*size]);
-		printf("%f",M[a+b*size]);
 		ave_w[a] += (100*M[a+b*size]);
   	 }
   	 fprintf(outp,"\n");
