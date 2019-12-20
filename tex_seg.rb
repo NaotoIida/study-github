@@ -4,6 +4,10 @@
 This program is my first ruby program. For this reason, I maynot completery write it.
 This program is to culcurate average and variance of words in text.
 Needed arguments are inputfilename, outputfilename, and number of words in text.
+
+2019/12/20
+Change code for checking accurace by esti_accu.sh.
+In detail, disable outp, output file. And separate number is fixed with 2.
 ************************************************************************************************
 ************************************************************************************************
 =end
@@ -56,6 +60,7 @@ end
     j += 1
  end
 
+=begin
 #Put out calculate data to output file.
  outp = File.open(ARGV[1],"w")
  ave_w.each do |i|
@@ -66,6 +71,7 @@ end
     outp.printf("%f,",i)
  end
  outp.putc("\n") 
+=end
 
 #Step1, Calculate C(r,s).
  sum_w = Array.new(201,0)
@@ -111,6 +117,7 @@ end
        s = 1
  end
 
+=begin
 #Put out C() to output file.
  C.each do |outer_array|
     outer_array.each do |midle_array|
@@ -120,6 +127,7 @@ end
        outp.putc("\n")
     end
  end
+=end
 
 #Step2, Mark parts of "EOS" in the text to end_s.
  end_s =Array.new
@@ -154,13 +162,15 @@ end
 	 end
  end
 
+=begin
 #Put out arg_minC() to output file.
  mincost.each_with_index do |outer_array,i|
     outp.printf("%d,",mincost[i][0])
     outp.printf("%f,",mincost[i][1])
     outp.putc("\n")
  end
- 
+=end
+
 #Step3, Saerch arg_mine().
  #C() calculate and put in to c_nol. And c_nol convert and make c_nolarray for treating easier.
  c_nolarray = Array.new(end_s.length).map{Array.new(end_s.length)}
@@ -211,7 +221,7 @@ end
 
 #Step4, separate segments.
  p ("Please input sparate number.")
- j = $stdin.gets.to_i
+ j = 2 #$stdin.gets.to_i
  g = end_s.length
  res = Array.new
 
@@ -223,4 +233,4 @@ end
  p res
 
 inp.close
-outp.close
+#outp.close
